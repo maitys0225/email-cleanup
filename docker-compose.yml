@@ -1,0 +1,35 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama-data:/root/.ollama
+    restart: unless-stopped
+    environment:
+      # Environment variables to optimize for lower memory usage
+      - OLLAMA_MODEL_PATH=/root/.ollama/models
+      # Use a smaller context window to reduce memory requirements
+      - OLLAMA_CONTEXT_LENGTH=1024
+      # Limit model loading to save memory
+      - OLLAMA_MAX_LOADED_MODELS=1
+    deploy:
+      resources:
+        limits:
+          memory: 7G
+        reservations:
+          memory: 4G
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./open-webui-data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

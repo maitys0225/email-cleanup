@@ -1,3 +1,9 @@
+# Models
+models/
+ollama-data/models/blobs
+open-webui-data/cache/
+open-webui-data/vector_db/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
